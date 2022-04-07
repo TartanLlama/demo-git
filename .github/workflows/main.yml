@@ -30,6 +30,19 @@ jobs:
 
       - name: 'Setup vcpkg'
         run: ./vcpkg/bootstrap-vcpkg.bat
+
+      # This step assumes `vcpkg` has been bootstrapped (run `./vcpkg/bootstrap-vcpkg`)
+      - name: 'Setup NuGet Credentials'
+        shell: 'bash'
+        # Replace <OWNER> with your organization name
+        run: >
+          `./vcpkg/vcpkg fetch nuget | tail -n 1`
+          sources add
+          -source "https://nuget.pkg.github.com/tartanllama/index.json"
+          -storepasswordincleartext
+          -name "GitHub"
+          -username "tartanllama"
+          -password "${{ secrets.GITHUB_TOKEN }}"
                
       - name: Configure CMake
         run: cmake -B ${{github.workspace}}/build --preset=windows-default
